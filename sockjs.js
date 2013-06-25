@@ -21,8 +21,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+if (goog && goog.provide) {
+    goog.provide('SockJS');
+}
+
 //     [*] Including lib/index.js
 // Public object
+/**
+ * @constructor
+ */
 SockJS = (function(){
               var _document = document;
               var _window = window;
@@ -966,7 +973,7 @@ var SockJS = function(url, dep_protocols_whitelist, options) {
     that.protocol = null;
     that.readyState = SockJS.CONNECTING;
     that._ir = createInfoReceiver(that._base_url);
-    that._ir.onfinish = function(info, rtt) {
+    that._ir['onfinish'] = function(info, rtt) {
         that._ir = null;
         if (info) {
             if (that._options.info) {
@@ -1381,7 +1388,7 @@ var jsonPGenericSender = function(url, payload, callback) {
 var createAjaxSender = function(AjaxObject) {
     return function(url, payload, callback) {
         var xo = new AjaxObject('POST', url + '/xhr_send', payload);
-        xo.onfinish = function(status, text) {
+        xo['onfinish'] = function(status, text) {
             callback(status === 200 || status === 204,
                      'http status ' + status);
         };
@@ -1752,7 +1759,7 @@ IframeTransport.prototype.i_constructor = function(ri, trans_url, base_url) {
                                             that.ri._didClose(1006, "Unable to load an iframe (" + r + ")");
                                         });
 
-    that.onmessage_cb = utils.bind(that.onmessage, that);
+    that.onmessage_cb = utils.bind(that['onmessage'], that);
     utils.attachMessage(that.onmessage_cb);
 };
 
@@ -1934,7 +1941,7 @@ InfoReceiver.prototype.doXhr = function(base_url, AjaxObject) {
     var tref = utils.delay(8000,
                            function(){xo.ontimeout();});
 
-    xo.onfinish = function(status, text) {
+    xo['onfinish'] = function(status, text) {
         clearTimeout(tref);
         tref = null;
         if (status === 200) {
@@ -1946,7 +1953,7 @@ InfoReceiver.prototype.doXhr = function(base_url, AjaxObject) {
             that.emit('finish');
         }
     };
-    xo.ontimeout = function() {
+    xo['ontimeout'] = function() {
         xo.close();
         that.emit('finish');
     };
@@ -2310,7 +2317,7 @@ var XhrReceiver = function(url, AjaxObject) {
     var buf_pos = 0;
 
     that.xo = new AjaxObject('POST', url, null);
-    that.xo.onchunk = function(status, text) {
+    that.xo['onchunk'] = function(status, text) {
         if (status !== 200) return;
         while (1) {
             var buf = text.slice(buf_pos);
@@ -2321,8 +2328,8 @@ var XhrReceiver = function(url, AjaxObject) {
             that.dispatchEvent(new SimpleEvent('message', {data: msg}));
         }
     };
-    that.xo.onfinish = function(status, text) {
-        that.xo.onchunk(status, text);
+    that.xo['onfinish'] = function(status, text) {
+        that.xo['onchunk'](status, text);
         that.xo = null;
         var reason = status === 200 ? 'network' : 'permanent';
         that.dispatchEvent(new SimpleEvent('close', {reason: reason}));
