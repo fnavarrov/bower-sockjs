@@ -684,7 +684,7 @@ utils.createHtmlfile = function (iframe_url, error_callback) {
             utils.unload_del(unload_ref);
             iframe.parentNode.removeChild(iframe);
             iframe = doc = null;
-            CollectGarbage();
+            //CollectGarbage();
         }
     };
     var onerror = function(r)  {
@@ -2370,7 +2370,7 @@ SockJS.getIframeTransport = function(){
 
                   return SockJS;
           })();
-if ('_sockjs_onload' in window) setTimeout(_sockjs_onload, 1);
+if ('_sockjs_onload' in window) setTimeout(window['_sockjs_onload'], 1);
 
 // AMD compliance
 if (typeof define === 'function' && define.amd) {
