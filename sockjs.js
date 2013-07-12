@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-if (goog && goog.provide) {
+if (typeof goog === 'object' && goog.provide) {
     goog.provide('SockJS');
 }
 
@@ -1201,7 +1201,7 @@ SockJS.prototype._applyInfo = function(info, rtt, protocols_whitelist) {
  * ***** END LICENSE BLOCK *****
  */
 
-var WebSocketTransport = SockJS.websocket = function(ri, trans_url) {
+var WebSocketTransport = SockJS['websocket'] = function(ri, trans_url) {
     var that = this;
     var url = trans_url + '/websocket';
     if (url.slice(0, 5) === 'https') {
